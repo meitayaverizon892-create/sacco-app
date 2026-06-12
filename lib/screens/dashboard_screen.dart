@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'members_screen.dart';
 import 'loan_screen.dart';
+import 'online_members_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -266,6 +267,43 @@ class DashboardScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Partner SACCOs Button (Online API)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OnlineMembersScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1A3C5E),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.wifi, color: Colors.white, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'Partner SACCOs (Online)',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
