@@ -68,18 +68,18 @@ class _SplashScreenState extends State<SplashScreen>
           opacity: _fadeAnimation,
           child: ScaleTransition(
             scale: _scaleAnimation,
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Logo Icon
-                const Icon(
+                Icon(
                   Icons.account_balance,
                   size: 100,
                   color: Colors.white,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 // App Name
-                const Text(
+                Text(
                   'SACCO APP',
                   style: TextStyle(
                     fontSize: 32,
@@ -88,22 +88,22 @@ class _SplashScreenState extends State<SplashScreen>
                     letterSpacing: 2,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 // Tagline
-                const Text(
+                Text(
                   'Saving Together',
                   style: TextStyle(
                     fontSize: 16,
                     color: Color(0xFFA8C7E8),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
                 // Loading indicator
-                const CircularProgressIndicator(
+                CircularProgressIndicator(
                   color: Colors.white,
                 ),
-                const SizedBox(height: 20),
-                const Text(
+                SizedBox(height: 20),
+                Text(
                   'Loading...',
                   style: TextStyle(
                     fontSize: 12,
