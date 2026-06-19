@@ -4,6 +4,7 @@ class Member {
   String memberNumber;
   double savings;
   String phone;
+  String? passwordHash; // Hashed with bcrypt - never store plain text
 
   Member({
     this.id,
@@ -11,9 +12,9 @@ class Member {
     required this.memberNumber,
     required this.savings,
     required this.phone,
+    this.passwordHash,
   });
 
-  // Convert a Member into a Map (for saving to database)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -21,10 +22,10 @@ class Member {
       'memberNumber': memberNumber,
       'savings': savings,
       'phone': phone,
+      'passwordHash': passwordHash,
     };
   }
 
-  // Convert a Map (from database) into a Member object
   factory Member.fromMap(Map<String, dynamic> map) {
     return Member(
       id: map['id'],
@@ -32,6 +33,7 @@ class Member {
       memberNumber: map['memberNumber'],
       savings: map['savings'],
       phone: map['phone'],
+      passwordHash: map['passwordHash'],
     );
   }
 }

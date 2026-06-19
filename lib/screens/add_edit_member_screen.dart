@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/member.dart';
 import '../database/db_helper.dart';
+import '../services/auth_service.dart';
 
 class AddEditMemberScreen extends StatefulWidget {
   final Member? member;
@@ -16,6 +17,8 @@ class _AddEditMemberScreenState extends State<AddEditMemberScreen> {
   final _memberNumberController = TextEditingController();
   final _savingsController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
 
   bool get isEditing => widget.member != null;
 
@@ -44,12 +47,29 @@ class _AddEditMemberScreenState extends State<AddEditMemberScreen> {
       return;
     }
 
+    // Password is required when registering a new member,
+    // optional when editing (leave blank to keep the current password)
+    if (!isEditing && _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please set a password for this member'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final String? passwordHash = _passwordController.text.isNotEmpty
+        ? AuthService.hashPassword(_passwordController.text)
+        : (isEditing ? widget.member!.passwordHash : null);
+
     final member = Member(
       id: isEditing ? widget.member!.id : null,
       name: _nameController.text,
       memberNumber: _memberNumberController.text,
       savings: double.tryParse(_savingsController.text) ?? 0,
       phone: _phoneController.text,
+      passwordHash: passwordHash,
     );
 
     if (isEditing) {
@@ -189,6 +209,47 @@ class _AddEditMemberScreenState extends State<AddEditMemberScreen> {
                       ),
                       prefixIcon:
                           const Icon(Icons.phone, color: Color(0xFF1A3C5E)),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    isEditing
+                        ? 'Password (leave blank to keep unchanged)'
+                        : 'Set Password',
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A3C5E)),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: !_isPasswordVisible,
+                    decoration: InputDecoration(
+                      hintText: isEditing
+                          ? 'Leave blank to keep current password'
+                          : 'Enter Password',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFFCCCCCC)),
+                      ),
+                      prefixIcon:
+                          const Icon(Icons.lock, color: Color(0xFF1A3C5E)),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: const Color(0xFF1A3C5E),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),

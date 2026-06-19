@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
+import '../database/db_helper.dart';
+import '../services/auth_service.dart';
+import '../models/session.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,34 +25,60 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.red,
         ),
       );
-    } else {
-      // Show loading
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Look up the member by their Member ID
+    final member =
+        await DBHelper.getMemberByNumber(_memberIdController.text.trim());
+
+    // Check the typed password against the stored bcrypt hash
+    final isValid = member != null &&
+        member.passwordHash != null &&
+        AuthService.verifyPassword(
+            _passwordController.text, member.passwordHash!);
+
+    if (!isValid) {
       setState(() {
-        _isLoading = true;
+        _isLoading = false;
       });
-
-      // Simulate network request
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Navigate to Dashboard
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const DashboardScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          },
-          transitionDuration: const Duration(milliseconds: 500),
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid Member ID or Password'),
+          backgroundColor: Colors.red,
         ),
       );
+      return;
     }
+
+    // Remember who's logged in so other screens (e.g. Loan screen) can use it
+    Session.currentMember = member;
+
+    if (!mounted) return;
+
+    // Navigate to Dashboard
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const DashboardScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
