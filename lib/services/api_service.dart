@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/online_member.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://jsonplaceholder.typicode.com/users';
+  static const String baseUrl =
+      'https://sacco-backend-5ujc.onrender.com/api/members';
 
   // GET - Fetch all online members
   static Future<List<OnlineMember>> fetchOnlineMembers() async {

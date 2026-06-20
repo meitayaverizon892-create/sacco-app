@@ -1,3 +1,4 @@
+import 'add_edit_member_screen.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import '../database/db_helper.dart';
@@ -240,7 +241,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Register
                   Center(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddEditMemberScreen(),
+                          ),
+                        );
+                      },
                       child: const Text(
                         'Don\'t have an account? Register here',
                         style: TextStyle(
