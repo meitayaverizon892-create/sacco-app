@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../database/db_helper.dart';
+import '../models/loan.dart';
+import '../models/session.dart';
 
 class LoanScreen extends StatefulWidget {
   const LoanScreen({super.key});
@@ -13,7 +16,7 @@ class _LoanScreenState extends State<LoanScreen> {
   final _durationController = TextEditingController();
   final _guarantorController = TextEditingController();
 
-  void _submitLoan() {
+  void _submitLoan() async {
     if (_amountController.text.isEmpty ||
         _purposeController.text.isEmpty ||
         _durationController.text.isEmpty ||
@@ -24,14 +27,40 @@ class _LoanScreenState extends State<LoanScreen> {
           backgroundColor: Colors.red,
         ),
       );
-    } else {
+      return;
+    }
+
+    final member = Session.currentMember;
+    if (member == null || member.id == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Loan Application Submitted Successfully!'),
-          backgroundColor: Colors.green,
+          content: Text('You must be logged in to apply for a loan'),
+          backgroundColor: Colors.red,
         ),
       );
+      return;
     }
+
+    final loan = Loan(
+      memberId: member.id!,
+      amount: double.tryParse(_amountController.text) ?? 0,
+      purpose: _purposeController.text,
+      durationMonths: int.tryParse(_durationController.text) ?? 0,
+      guarantorName: _guarantorController.text,
+      dateApplied: DateTime.now().toIso8601String(),
+    );
+
+    await DBHelper.insertLoan(loan);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Loan Application Submitted Successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Navigator.pop(context);
   }
 
   @override
